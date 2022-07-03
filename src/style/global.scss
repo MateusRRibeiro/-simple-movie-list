@@ -1,0 +1,22 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+#app{
+    min-width: 100vw;
+    min-height: 100vh;
+    background-color: #0f0d26;
+    color: white;
+    font-family: system-ui;
+    font-size: 24px;
+}
+
+header{
+    display: flex;
+    width: 100%;
+    padding: 16px;
+    justify-content: center;
+    background-color: black;
+    margin-bottom: 24px;
+}
