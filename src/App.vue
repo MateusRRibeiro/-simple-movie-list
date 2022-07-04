@@ -18,7 +18,7 @@
   </div>
 
   <div class="container-lista">
-    <VList :lista="listaDeFilmes"/>
+    <VList :lista="listaDeFilmes" @removerItemEvento="removerItemLista"/>
   </div>
 </div>
 
@@ -35,13 +35,18 @@ export default {
   data: () => ({
     nomeNovoFilme: '',
     listaDeFilmes: [
-      { id: 1, nome: 'Quem quer ser um milhonário', assistido: false },
+      { id: 1, nome: 'Quem quer ser um milionário', assistido: false },
       { id: 2, nome: 'O hoje já é amanhã', assistido: true },
     ],
   }),
   components: {
     VList,
     VButton,
+  },
+  methods: {
+    removerItemLista(idFilme) {
+      this.listaDeFilmes = this.listaDeFilmes.filter((filme) => filme.id !== idFilme);
+    },
   },
 };
 </script>
