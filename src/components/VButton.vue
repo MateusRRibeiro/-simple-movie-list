@@ -22,5 +22,6 @@ export default {
     width: fit-content;
     padding: 8px 12px;
     background-color: #094854;
+    cursor: pointer;
   }
 </style>

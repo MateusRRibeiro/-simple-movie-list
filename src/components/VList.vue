@@ -12,13 +12,15 @@
             class="lista__nome"
             :class="{'lista__nome--ativo': item.assistido}"
           >{{item.nome}}</p>
-          <IconX @click="removerItem(item)" class="icone-remover"/>
+          <IconPencil @click="editarItem(item)" class="icone icone-editar"/>
+          <IconX @click="removerItem(item)" class="icone icone-remover"/>
         </ul>
     </li>
 </template>
 
 <script>
 import IconX from '../assets/IconX.svg';
+import IconPencil from '../assets/IconPencil.svg';
 
 export default {
   name: 'VList',
@@ -31,6 +33,7 @@ export default {
   },
   components: {
     IconX,
+    IconPencil,
   },
   methods: {
     removerItem(idItem) {
@@ -38,6 +41,9 @@ export default {
     },
     atualizarValorLista(item) {
       this.$emit('atualizar-valor-lista', item);
+    },
+    editarItem(item) {
+      this.$emit('editar-filme-lista', item);
     },
   },
 };
@@ -54,6 +60,7 @@ export default {
       display: flex;
       gap: 12px;
       align-content: center;
+      word-break: break-word;
     }
 
     &__input{
@@ -61,12 +68,31 @@ export default {
       min-height: 24px;
     }
 
+    &__nome{
+      margin-right: 32px;
+    }
+
     &__nome--ativo{
       text-decoration: line-through;
     }
   }
 
+  .icone{
+    min-width: 24px;
+    cursor: pointer;
+  }
+
   .icone-remover{
     fill: #e50000;
+  }
+
+  .icone-editar{
+    fill: #28a745;
+  }
+
+  @media(max-width: 820px){
+    .icone-editar{
+      margin-left: auto;
+    }
   }
 </style>

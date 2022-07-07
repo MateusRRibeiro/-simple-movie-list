@@ -10,7 +10,7 @@
           class="input-filme"
           v-model="nomeNovoFilme"
           type="text"
-          placeholder="Ex: Interistelar, Jogos Mortais, O ultimo..."
+          placeholder="Ex: Interestelar, Jogos Mortais, O ultimo..."
         />
       </div>
 
@@ -23,9 +23,22 @@
           :lista="listaDeFilmes"
           @removerItemEvento="removerItemLista"
           @atualizarValorLista="alterarFilme"
+          @editarFilmeLista="abrirModalEditarFilme"
         />
       </div>
     </div>
+
+    <VModal :modalEstaAtivo="modalEstaAtivo" @fecharModal="fecharModal">
+      <div class="conteudo-modal">
+        <input
+          class="input-filme"
+          v-model="filmeEditar.nome"
+          type="text"
+        />
+
+        <VButton @click="editarFilme" nome="Editar Filme"/>
+      </div>
+    </VModal>
   </div>
 </template>
 
@@ -35,6 +48,7 @@ import GlobalStyle from './style/global.scss';
 
 import VList from './components/VList.vue';
 import VButton from './components/VButton.vue';
+import VModal from './components/VModal.vue';
 
 export default {
   name: 'App',
@@ -42,10 +56,15 @@ export default {
     nomeNovoFilme: '',
     listaDeFilmes: [],
     appFoiCarregado: false,
+    filmeEditar: {
+      nome: '',
+    },
+    modalEstaAtivo: false,
   }),
   components: {
     VList,
     VButton,
+    VModal,
   },
   methods: {
     async removerItemLista(filmeRemovido) {
@@ -84,6 +103,17 @@ export default {
         console.error(erro);
       }
     },
+    async editarFilme() {
+      await this.alterarFilme(this.filmeEditar);
+      this.fecharModal();
+    },
+    async abrirModalEditarFilme(filmeEditar) {
+      this.filmeEditar = filmeEditar;
+      this.modalEstaAtivo = true;
+    },
+    fecharModal() {
+      this.modalEstaAtivo = false;
+    },
   },
   async created() {
     await this.consultarFilmes();
@@ -118,9 +148,28 @@ export default {
 
   .container-lista{
     display: flex;
+    padding: 12px;
     flex-direction: column;
     align-items: center;
     margin-bottom: 32px;
+  }
+
+  .conteudo-modal{
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: center;
+
+    &::v-deep .input-filme{
+      display: flex;
+      min-width: calc(100% - 24px);
+      min-height: 40px;
+      border-radius: 25px;
+      padding: 8px 12px;
+      border: none;
+      font-size: 18px;
+    }
   }
 
 </style>
