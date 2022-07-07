@@ -1,13 +1,18 @@
 <template>
     <li class="lista">
-        <ul v-for="item in lista" :key="item.id" class="lista__linha">
+        <p v-if="lista.length === 0">Adicione um filme a sua lista!</p>
+        <ul v-else v-for="item in lista" :key="item.id" class="lista__linha">
           <input
             class="lista__input"
             type="checkbox"
             v-model="item.assistido"
+            @change="atualizarValorLista(item)"
           />
-          {{item.nome}}
-          <IconX @click="removerItem(item.id)" class="icone-remover"/>
+          <p
+            class="lista__nome"
+            :class="{'lista__nome--ativo': item.assistido}"
+          >{{item.nome}}</p>
+          <IconX @click="removerItem(item)" class="icone-remover"/>
         </ul>
     </li>
 </template>
@@ -31,6 +36,9 @@ export default {
     removerItem(idItem) {
       this.$emit('remover-item-evento', idItem);
     },
+    atualizarValorLista(item) {
+      this.$emit('atualizar-valor-lista', item);
+    },
   },
 };
 </script>
@@ -51,6 +59,10 @@ export default {
     &__input{
       min-width: 24px;
       min-height: 24px;
+    }
+
+    &__nome--ativo{
+      text-decoration: line-through;
     }
   }
 

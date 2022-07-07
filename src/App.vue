@@ -1,30 +1,36 @@
 <template>
-<div>
-  <header>
-    <p>Minha Lista de Filmes</p>
-  </header>
+  <div>
+    <header>
+      <p>Minha Lista de Filmes</p>
+    </header>
 
-  <div class="container-formulario">
-    <input
-      class="input-filme"
-      v-model="nomeNovoFilme"
-      type="text"
-      placeholder="Ex: Interistelar, Jogos Mortais, O ultimo..."
-    />
+    <div v-if="appFoiCarregado">
+      <div class="container-formulario">
+        <input
+          class="input-filme"
+          v-model="nomeNovoFilme"
+          type="text"
+          placeholder="Ex: Interistelar, Jogos Mortais, O ultimo..."
+        />
+      </div>
+
+      <div class="container-botoes">
+        <VButton @click="adicionarItemLista(nomeNovoFilme)" nome="Adicionar Filme"/>
+      </div>
+
+      <div class="container-lista">
+        <VList
+          :lista="listaDeFilmes"
+          @removerItemEvento="removerItemLista"
+          @atualizarValorLista="alterarFilme"
+        />
+      </div>
+    </div>
   </div>
-
-  <div class="container-botoes">
-    <VButton nome="Adicionar Filme"/>
-  </div>
-
-  <div class="container-lista">
-    <VList :lista="listaDeFilmes" @removerItemEvento="removerItemLista"/>
-  </div>
-</div>
-
 </template>
 
 <script>
+import axios from 'axios';
 import GlobalStyle from './style/global.scss';
 
 import VList from './components/VList.vue';
@@ -34,19 +40,55 @@ export default {
   name: 'App',
   data: () => ({
     nomeNovoFilme: '',
-    listaDeFilmes: [
-      { id: 1, nome: 'Quem quer ser um milionário', assistido: false },
-      { id: 2, nome: 'O hoje já é amanhã', assistido: true },
-    ],
+    listaDeFilmes: [],
+    appFoiCarregado: false,
   }),
   components: {
     VList,
     VButton,
   },
   methods: {
-    removerItemLista(idFilme) {
-      this.listaDeFilmes = this.listaDeFilmes.filter((filme) => filme.id !== idFilme);
+    async removerItemLista(filmeRemovido) {
+      this.listaDeFilmes = this.listaDeFilmes.filter((filme) => filme.id !== filmeRemovido.id);
+      await this.removerFilme(filmeRemovido);
     },
+    async adicionarItemLista(nomeFilme) {
+      try {
+        await axios.post('http://localhost:8000/api/filmes', { nome: nomeFilme });
+        await this.consultarFilmes();
+      } catch (erro) {
+        console.error(erro);
+      }
+    },
+    async consultarFilmes() {
+      const response = await axios.get('http://localhost:8000/api/filmes');
+      this.listaDeFilmes = response.data;
+    },
+    async alterarFilme(filmeAlterado) {
+      const filmeLista = this.listaDeFilmes.find((filme) => filme.id === filmeAlterado.id);
+
+      if (filmeLista === undefined) {
+        return;
+      }
+
+      try {
+        await axios.patch(`http://localhost:8000/api/filmes/${filmeAlterado.id}`, { ...filmeAlterado });
+      } catch (erro) {
+        console.error(erro);
+      }
+    },
+    async removerFilme(filmeRemovido) {
+      try {
+        await axios.delete(`http://localhost:8000/api/filmes/${filmeRemovido.id}`);
+      } catch (erro) {
+        console.error(erro);
+      }
+    },
+  },
+  async created() {
+    await this.consultarFilmes();
+
+    this.appFoiCarregado = true;
   },
 };
 </script>
