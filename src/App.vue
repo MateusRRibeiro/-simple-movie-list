@@ -39,6 +39,12 @@
         <VButton @click="editarFilme" nome="Editar Filme"/>
       </div>
     </VModal>
+
+    <VNotification
+      :texto="notificacaoTexto"
+      :iniciar='deveIniciarNotificacao'
+      @desativa-notificacao="desativaNotificacao"
+    />
   </div>
 </template>
 
@@ -49,6 +55,7 @@ import GlobalStyle from './style/global.scss';
 import VList from './components/VList.vue';
 import VButton from './components/VButton.vue';
 import VModal from './components/VModal.vue';
+import VNotification from './components/VNotification.vue';
 
 export default {
   name: 'App',
@@ -60,11 +67,14 @@ export default {
       nome: '',
     },
     modalEstaAtivo: false,
+    notificacaoTexto: '',
+    deveIniciarNotificacao: false,
   }),
   components: {
     VList,
     VButton,
     VModal,
+    VNotification,
   },
   methods: {
     async removerItemLista(filmeRemovido) {
@@ -72,9 +82,17 @@ export default {
       await this.removerFilme(filmeRemovido);
     },
     async adicionarItemLista(nomeFilme) {
+      const nomeFilmeSemEspacos = nomeFilme.trim();
+
+      if (nomeFilmeSemEspacos === '') {
+        this.iniciarNotificacao('Informe o nome do filme!');
+        return;
+      }
+
       try {
-        await axios.post('http://localhost:8000/api/filmes', { nome: nomeFilme });
+        await axios.post('http://localhost:8000/api/filmes', { nome: nomeFilmeSemEspacos });
         await this.consultarFilmes();
+        this.nomeNovoFilme = '';
       } catch (erro) {
         console.error(erro);
       }
@@ -113,6 +131,14 @@ export default {
     },
     fecharModal() {
       this.modalEstaAtivo = false;
+    },
+    iniciarNotificacao(texto) {
+      this.notificacaoTexto = texto;
+      this.deveIniciarNotificacao = true;
+    },
+    desativaNotificacao() {
+      this.notificacaoTexto = '';
+      this.deveIniciarNotificacao = false;
     },
   },
   async created() {
