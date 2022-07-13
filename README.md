@@ -1,6 +1,6 @@
 <h1 align="center">Lista de Filmes</h1>
 
-> Status: Developing ⚠️
+<h3 align="center">Status: Concluído ✅</h3>
 
 ## Descrição
 Este é o Front-End da aplicação para guardar uma lista de filmes que queiras assistir.
