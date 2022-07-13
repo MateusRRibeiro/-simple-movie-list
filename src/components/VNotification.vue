@@ -62,6 +62,7 @@ export default {
     overflow:hidden;
     transition: all .5s ease;
     display: flex;
+    z-index: 999;
 
     &--ativo{
         bottom: 0;
