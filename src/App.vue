@@ -27,9 +27,27 @@
           @editarFilmeLista="abrirModalEditarFilme"
         />
 
-        <svg v-if="carregandoListagem" class="carregando" width="400" height="400" viewBox="0 0 40 60">
-          <polygon class="triangulo" fill="none" stroke="#fff" stroke-width="1" points="16,1 32,32 1,32" />
-          <text class="texto-carregando" x="0" y="45" fill="#fff">Carregando...</text>
+        <svg v-if="carregandoListagem"
+          class="carregando"
+          width="400"
+          height="400"
+          viewBox="0 0 40 60"
+        >
+          <polygon
+            class="carregando__triangulo"
+            fill="none"
+            stroke="#fff"
+            stroke-width="1"
+            points="16,1 32,32 1,32"
+          />
+          <text
+            class="carregando__texto"
+            x="0"
+            y="45"
+            fill="#fff"
+          >
+            Carregando...
+          </text>
         </svg>
       </div>
     </div>
@@ -229,26 +247,20 @@ export default {
     }
   }
 
-  .carregando {
+  .carregando{
     width: 174px;
-  }
 
-  .triangulo {
-    stroke:#0EB4DB;
-    stroke-dasharray: 17;
-    animation: dash 2.5s cubic-bezier(0.35, 0.04, 0.63, 0.95) infinite;
-  }
-
-  @keyframes dash {
-    to {
-      stroke-dashoffset: 136;
+    &__triangulo{
+      stroke:#0EB4DB;
+      stroke-dasharray: 17;
+      animation: dash 2.5s cubic-bezier(0.35, 0.04, 0.63, 0.95) infinite;
     }
-  }
 
-  .texto-carregando {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 5px;
-    animation: piscar .9s ease-in-out infinite;
+    &__texto{
+      font-family: 'Orbitron', sans-serif;
+      font-size: 5px;
+      animation: piscar .9s ease-in-out infinite;
+    }
   }
 
   @keyframes piscar {
