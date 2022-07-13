@@ -20,11 +20,17 @@
 
       <div class="container-lista">
         <VList
+          v-if="!carregandoListagem"
           :lista="listaDeFilmes"
           @removerItemEvento="removerItemLista"
           @atualizarValorLista="alterarFilme"
           @editarFilmeLista="abrirModalEditarFilme"
         />
+
+        <svg v-if="carregandoListagem" class="carregando" width="400" height="400" viewBox="0 0 40 60">
+          <polygon class="triangulo" fill="none" stroke="#fff" stroke-width="1" points="16,1 32,32 1,32" />
+          <text class="texto-carregando" x="0" y="45" fill="#fff">Carregando...</text>
+        </svg>
       </div>
     </div>
 
@@ -69,6 +75,7 @@ export default {
     modalEstaAtivo: false,
     notificacaoTexto: '',
     deveIniciarNotificacao: false,
+    carregandoListagem: true,
   }),
   components: {
     VList,
@@ -98,8 +105,15 @@ export default {
       }
     },
     async consultarFilmes() {
-      const response = await axios.get('http://localhost:8000/api/filmes');
-      this.listaDeFilmes = response.data;
+      try {
+        this.carregandoListagem = true;
+        const response = await axios.get('http://localhost:8000/api/filmes');
+        this.listaDeFilmes = response.data;
+        this.carregandoListagem = false;
+      } catch (erro) {
+        this.carregandoListagem = true;
+        console.error(erro);
+      }
     },
     async alterarFilme(filmeAlterado) {
       const filmeLista = this.listaDeFilmes.find((filme) => filme.id === filmeAlterado.id);
@@ -109,28 +123,38 @@ export default {
       }
 
       try {
-        await axios.patch(`http://localhost:8000/api/filmes/${filmeAlterado.id}`, { ...filmeAlterado });
+        const response = await axios.patch(`http://localhost:8000/api/filmes/${filmeAlterado.id}`, { ...filmeAlterado });
+        this.iniciarNotificacao(response.data.message);
       } catch (erro) {
         console.error(erro);
       }
     },
     async removerFilme(filmeRemovido) {
       try {
-        await axios.delete(`http://localhost:8000/api/filmes/${filmeRemovido.id}`);
+        const response = await axios.delete(`http://localhost:8000/api/filmes/${filmeRemovido.id}`);
+        this.iniciarNotificacao(response.data.message);
       } catch (erro) {
         console.error(erro);
       }
     },
     async editarFilme() {
+      if (this.filmeEditar.nome.trim() === '') {
+        this.iniciarNotificacao('Informe o nome do filme!');
+        return;
+      }
+
       await this.alterarFilme(this.filmeEditar);
       this.fecharModal();
     },
     async abrirModalEditarFilme(filmeEditar) {
       this.filmeEditar = filmeEditar;
       this.modalEstaAtivo = true;
+      this.retirarScrollBody();
     },
     fecharModal() {
       this.modalEstaAtivo = false;
+      this.consultarFilmes();
+      this.adicionarScrollBody();
     },
     iniciarNotificacao(texto) {
       this.notificacaoTexto = texto;
@@ -139,6 +163,14 @@ export default {
     desativaNotificacao() {
       this.notificacaoTexto = '';
       this.deveIniciarNotificacao = false;
+    },
+    adicionarScrollBody() {
+      const elementoBody = document.querySelector('body');
+      elementoBody.style.overflow = 'auto';
+    },
+    retirarScrollBody() {
+      const elementoBody = document.querySelector('body');
+      elementoBody.style.overflow = 'hidden';
     },
   },
   async created() {
@@ -177,7 +209,6 @@ export default {
     padding: 12px;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 32px;
   }
 
   .conteudo-modal{
@@ -195,6 +226,34 @@ export default {
       padding: 8px 12px;
       border: none;
       font-size: 18px;
+    }
+  }
+
+  .carregando {
+    width: 174px;
+  }
+
+  .triangulo {
+    stroke:#0EB4DB;
+    stroke-dasharray: 17;
+    animation: dash 2.5s cubic-bezier(0.35, 0.04, 0.63, 0.95) infinite;
+  }
+
+  @keyframes dash {
+    to {
+      stroke-dashoffset: 136;
+    }
+  }
+
+  .texto-carregando {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 5px;
+    animation: piscar .9s ease-in-out infinite;
+  }
+
+  @keyframes piscar {
+    50% {
+      opacity: 0;
     }
   }
 
