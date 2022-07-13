@@ -9,13 +9,11 @@ O Back-End pode ser encontrado <a href="https://github.com/zxguil/lista-de-filme
 
 Tabela de conteúdos
 =================
-<!--ts-->
-   * [Instalação do back-end](#instalacao-back-end)
-   * [Instalação do front-end](#instalacao-front-end)
-   * [Tecnologias](#tecnologias)
-<!--te-->
+   * Instalação do Back-End
+   * Instalação do Front-End
+   * Tecnologias
 
-## Instalação back-end
+## Instalação Back-End
 
 Clone este repositório
 
@@ -40,7 +38,7 @@ Inicialize a aplicação
 A aplicação será inicializada na porta 8000
 Agora o <a href="https://github.com/MateusRRibeiro/-simple-movie-list">front-end</a> deverá ser inicializado
 
-## Instalação front-end
+## Instalação Front-End
 
 Volte para a pasta raíz
 
